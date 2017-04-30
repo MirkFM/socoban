@@ -1,0 +1,20 @@
+include /node_modules/bemto/bemto
+include /node_modules/bemto/settings
+
+doctype html
+html(lang='ru')
+	head
+		meta(charset = "UTF-8")
+		block title
+			title!= pData.pageTitle
+
+		include base/meta
+		block meta
+
+		include base/head_link
+		block bg
+	body
+		block content
+
+		include base/footer_link
+		block footer_link

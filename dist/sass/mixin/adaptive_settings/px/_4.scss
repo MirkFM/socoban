@@ -1,0 +1,35 @@
+$units: 'px';
+
+@mixin desktopOnly() {
+	@media only screen
+			and (min-width: $desktop_w)
+	{
+		@content
+	}
+}
+
+@mixin laptopOnly() {
+	@media only screen
+		and (min-width: $laptop_w)
+		and (max-width: $desktop_w - 1)
+	{
+		@content
+	}
+}
+
+@mixin tabletOnly() {
+	@media only screen
+		and (min-width: $tablet_w)
+		and (max-width: $laptop_w - 1)
+	{
+		@content
+	}
+}
+
+@mixin mobileOnly() {
+	@media only screen
+		and (max-width: $tablet_w - 1)
+	{
+		@content
+	}
+}

@@ -1,0 +1,40 @@
+$units: 'rem';
+
+@mixin desktopOnly() {
+	@at-root {
+		.deviceDesktop & {
+			@content
+		}
+	}		
+}
+
+@mixin laptopOnly() {
+	@at-root {
+		.deviceLaptop & {
+			@if 1 != 1 {
+				@content
+			}
+		}
+	}		
+}
+
+
+@mixin tabletOnly() {
+	@at-root {
+		.deviceTablet & {
+			@if 1 != 1 {
+				@content
+			}
+		}
+	}		
+}
+
+@mixin mobileOnly() {
+	@at-root {
+		.deviceMobile & {
+			@if 1 != 1 {
+				@content
+			}
+		}
+	}
+}

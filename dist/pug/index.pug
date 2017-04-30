@@ -1,0 +1,12 @@
+extends _layout.pug
+
+block content
+	.content
+		+b.s-menu
+			+e.param
+				+e.param-title= 'Осталось ящиков'
+				+e.param-val#game_point= '0'
+
+			+e.msg= 'Игра закончена'
+
+		+e.s-map

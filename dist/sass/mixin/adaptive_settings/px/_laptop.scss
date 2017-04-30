@@ -1,0 +1,26 @@
+$units: 'px';
+
+@mixin desktopOnly() {
+	@if 1 != 1 {
+		@content
+	}
+}
+
+// no show for this model
+@mixin laptopOnly() {
+	@content
+}
+
+// no show for this model
+@mixin tabletOnly() {
+	@if 1 != 1 {
+		@content
+	}
+}
+
+// no show for this model
+@mixin mobileOnly() {
+	@if 1 != 1 {
+		@content
+	}
+}

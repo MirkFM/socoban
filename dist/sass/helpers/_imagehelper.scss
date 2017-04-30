@@ -1,0 +1,37 @@
+@function compassImagehelper_getList($image) {
+  $img: '../dist/img/' + $image;
+
+  @if map-has-key($compass-imagehelper-imagesmap, $img) {
+    $list: map-get($compass-imagehelper-imagesmap, $img);
+    @if type-of($list) == 'list' {
+      @return $list;
+    }
+  }
+  @warn 'Image `#{$image}` not found.';
+  @return false;
+}
+
+@function image-width($image) {
+  $list: compassImagehelper_getList($image);
+  $width: nth($list, 1);
+  @return e($width);
+}
+
+@function image-height($image) {
+  $list: compassImagehelper_getList($image);
+  $height: nth($list, 2);
+  @return e($height);
+}
+
+@function image-url($image) {
+  $result: quote('../img/' + $image);
+  @return  url($result);
+}
+
+@function image-exists($image) {
+  @return map-has-key($compass-imagehelper-imagesmap, $image);
+}
+
+
+$compass-imagehelper-imagesmap:(
+);

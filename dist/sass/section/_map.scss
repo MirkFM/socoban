@@ -1,0 +1,64 @@
+$pointSize: 50px;
+
+.s-map {
+	width: 7 * $pointSize;
+	height: 6 * $pointSize;
+	border: 2px solid black;
+	float: left;
+	margin-left: 20px;
+	background-color: #ccc;
+	box-sizing: content-box;
+	position: relative;
+
+	&__line {
+		height: $pointSize;
+		overflow: hidden;
+	}
+
+	&__cell {
+		float: left;
+		position: relative;
+		width: $pointSize;
+		height: $pointSize;
+	}
+
+	&__wall, &__box, &__case, &__case_box, &__loader {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	&__wall {
+		background-color: #666;
+		// @include bg('wall.png');
+	}
+
+	&__box {
+		background-color: #d0863d;
+	}
+
+	&__case_box {
+		background-color: #227006;
+	}
+
+	&__case {
+		background-color: #227006;
+		width: 10px;
+		height: 10px;
+		left: 50%;
+		top: 50%;
+		margin: -5px 0 0 -5px;
+	}
+
+	&__loader {
+		background-color: yellow;
+		border-radius: 50%;
+
+	}
+
+	&__wall, &__box, &__case_box, &__loader {
+		border: 1px solid #ccc;
+	}
+}

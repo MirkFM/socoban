@@ -1,0 +1,107 @@
+@mixin only($media_rule) {
+	$media_list: '';
+
+	@if $media_rule == desktop {
+		$media_list: desktop;
+
+	} @else if $media_rule == laptop {
+		$media_list: laptop;
+
+	} @else if $media_rule == tablet {
+		$media_list: tablet;
+
+	} @else if $media_rule == mobile {
+		$media_list: mobile;
+
+	} @else if $media_rule == desktop-laptop {
+		$media_list: desktop, laptop;
+
+	} @else if $media_rule == desktop-tablet {
+		$media_list: desktop, laptop, tablet;
+
+	} @else if $media_rule == laptop- {
+		$media_list: laptop, tablet, mobile;
+
+	} @else if $media_rule == laptop-tablet {
+		$media_list: laptop, tablet;
+
+	} @else if $media_rule == tablet- {
+		$media_list: tablet, mobile;
+	}
+
+	@each $media in $media_list {
+		@if $media == desktop {
+			@include desktopOnly() {
+				@content
+			}
+		} @else if $media == laptop {
+			@include laptopOnly() {
+				@content
+			}
+		} @else if $media == tablet {
+			@include tabletOnly() {
+				@content
+			}
+		} @else if $media == mobile {
+			@include mobileOnly() {
+				@content
+			}
+		}
+	}
+}
+
+.no-desktop {
+	@include desktopOnly() {
+		display: none !important;
+	}
+}
+
+.no-laptop {
+	@include laptopOnly() {
+		display: none !important;
+	}
+}
+
+.no-tablet {
+	@include tabletOnly() {
+		display: none !important;
+	}
+}
+
+.no-mobile {
+	@include mobileOnly() {
+		display: none !important;
+	}
+}
+
+.only-desktop {
+	@include only(laptop-) {
+		display: none !important;
+	}
+}
+
+.only-laptop {
+	@include only(desktop-) {
+		display: none !important;
+	}
+
+	@include only(tablet-) {
+		display: none !important;
+	}
+}
+
+.only-tablet {
+	@include only(desktop-laptop) {
+		display: none !important;
+	}
+
+	@include only(mobile) {
+		display: none !important;
+	}
+}
+
+.only-mobile {
+	@include only(desktop-tablet) {
+		display: none !important;
+	}
+}

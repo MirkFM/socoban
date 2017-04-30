@@ -1,0 +1,17 @@
+.e-btn {
+	display: inline-block;
+	vertical-align: middle;
+	text-decoration: none;
+	border: 1px solid #ccc;
+	background-color: #ccc;
+	color: white;
+	padding: 0 20px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	cursor: pointer;
+	
+	&.block {
+		display: block;
+	}
+}
