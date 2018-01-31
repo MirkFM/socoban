@@ -1,12 +1,12 @@
-include /node_modules/bemto/bemto
-include /node_modules/bemto/settings
+include /node_modules/bemto.pug/bemto
+include /dist/pug/settings/bemto-settings
 
 doctype html
 html(lang='ru')
 	head
-		meta(charset = "UTF-8")
+		meta(charset = "UTF-8")/
 		block title
-			title!= pData.pageTitle
+			title Socoban
 
 		include base/meta
 		block meta
