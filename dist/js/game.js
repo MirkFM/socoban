@@ -7,11 +7,9 @@
 		WALL = 7,
 		CASE_BOX = CASE + BOX,
 		CASE_LOADER = CASE + LOADER,
-		STEPX = 50,
-		STEPY = 50,
 		CLASSPREFIX = 's-map';
 
-	var socoban, type,
+	var socoban,
 		map = [
 			[0, 0, 7, 7, 7, 7, 0],
 			[7, 7, 7, 0, 0, 7, 0],
@@ -22,7 +20,7 @@
 		];
 
 
-	Game = function() {
+	var Game = function() {
 		this.finish = 0;
 		this.step = 0;
 		this.point = 0;
@@ -37,46 +35,40 @@
 	};
 
 	Game.prototype.updateHistoryStep = function(x, y, value) {
-		var _ = this;
-
-		if (typeof(_.historyStep[y]) == 'undefined') {
-			_.historyStep[y] = {};
+		if (typeof(this.historyStep[y]) == 'undefined') {
+			this.historyStep[y] = {};
 		}
 
-		_.historyStep[y][x] = value;
+		this.historyStep[y][x] = value;
 	};
 
 	Game.prototype.updateHistory = function() {
-		var _ = this;
-		_.history.push(_.historyStep);
+		this.history.push(this.historyStep);
 	};
 
 	Game.prototype.updateViewChange = function(x, y, value) {
-		var _ = this;
-
-		if (typeof(_.viewChange[y]) == 'undefined') {
-			_.viewChange[y] = {};
+		if (typeof(this.viewChange[y]) == 'undefined') {
+			this.viewChange[y] = {};
 		}
 
-		_.viewChange[y][x] = value;
+		this.viewChange[y][x] = value;
 	};
 
 	Game.prototype.updateView = function() {
-		var line, cell, type, i, max_i, k, max_k, x, y,
-			html_map = document.querySelector('.' + CLASSPREFIX),
-			_ = this;
+		var line, cell, type, k, maxK, x, y,
+			htmlMap = document.querySelector('.' + CLASSPREFIX);
 
-		for (y in _.viewChange) {
-			line = html_map.querySelectorAll('.' + CLASSPREFIX +'__line')[y];
+		for (y in this.viewChange) {
+			line = htmlMap.querySelectorAll('.' + CLASSPREFIX +'__line')[y];
 
-			for(x in _.viewChange[y]) {
+			for(x in this.viewChange[y]) {
 				cell = line.querySelectorAll('.' + CLASSPREFIX +'__cell')[x];
 				cell.innerHTML = '';
 
-				type = _.getElementType(_.viewChange[y][x], x, y);
+				type = this.getElementType(this.viewChange[y][x], x, y);
 
-				for (k = 0, max_k = type.length; k < max_k; k++) {
-					cell.appendChild(_.getElementView(type[k]));
+				for (k = 0, maxK = type.length; k < maxK; k++) {
+					cell.appendChild(this.getElementView(type[k]));
 				}
 			}
 		}
@@ -84,85 +76,82 @@
 
 	Game.prototype.getElementView = function(type) {
 		var view = document.createElement('div');
+
 		view.className = CLASSPREFIX + '__' + type;
 
 		return view;
 	};
 
 	Game.prototype.updateCell = function(x, y, diff) {
-		var event,
-			_ = this,
-			val = _.map[y][x];
+		var val = this.map[y][x];
 
 		if (val === CASE && diff === BOX) {
-			_.point--;
+			this.point--;
 		} else if (val === CASE_BOX) {
-			_.point++;
+			this.point++;
 		}
 
-		_.map[y][x] = val + diff;
-		_.updateViewChange(x, y, _.map[y][x]);
+		this.map[y][x] = val + diff;
+		this.updateViewChange(x, y, this.map[y][x]);
 
-		updateGame(_.point);
+		updateGame(this.point);
 	};
 
 	Game.prototype.updateMap = function() {
-		var val, new_val,
-			_ = this;
+		var val, new_val, x, y;
 
-		for (y in _.viewChange) {
-			for (x in _.viewChange[y]) {
-				val = _.map[y][x];
-				new_val = _.viewChange[y][x];
+		for (y in this.viewChange) {
+			for (x in this.viewChange[y]) {
+				val = this.map[y][x];
+				new_val = this.viewChange[y][x];
 
 				if (val === CASE && new_val === CASE_BOX) {
-					_.point--;
+					this.point--;
 				} else if (val === CASE_BOX && new_val !== CASE_BOX) {
-					_.point++;
+					this.point++;
 				}
-				_.map[y][x] = new_val;
+				this.map[y][x] = new_val;
 			}
 		}
 
-		updateGame(_.point);
+		updateGame(this.point);
 	};
 
 	Game.prototype.change = function(vector) {
-		var _ = this,
-			x = Number(_.active.x),
-			y = Number(_.active.y);
+		var point,
+			x = Number(this.active.x),
+			y = Number(this.active.y);
 
-		_.historyStep = {};
-		_.viewChange = {};
+		this.historyStep = {};
+		this.viewChange = {};
 
-		_.updateHistoryStep(x, y, _.map[y][x]);
+		this.updateHistoryStep(x, y, this.map[y][x]);
 		/* view next point */
 		x = x + Number(vector[0]);
 		y = y + Number(vector[1]);
-		point = _.map[y][x];
+		point = this.map[y][x];
 
 		if ( (point === VOID) || (point === CASE) ) {
-			_.updateHistoryStep(x, y, point);
-			_.move(vector, x, y);
+			this.updateHistoryStep(x, y, point);
+			this.move(vector, x, y);
 		} else if ( (point === BOX) || (point === CASE_BOX) ) {
 			/* view following next point */
-			_.updateHistoryStep(x, y, point);
+			this.updateHistoryStep(x, y, point);
 			x = x + Number(vector[0]);
 			y = y + Number(vector[1]);
-			point = _.map[y][x];
+			point = this.map[y][x];
 
 			if ( (point === VOID) || (point === CASE) ) {
-				_.updateHistoryStep(x, y, point);
-				_.push(vector, x, y);
+				this.updateHistoryStep(x, y, point);
+				this.push(vector, x, y);
 			}
 		}
 	};
 
 	Game.prototype.over = function() {
-		var event,
-			_ = this;
+		var event;
 
-		_.finish = 1;
+		this.finish = 1;
 		
 		event = new CustomEvent("gameOver");
 		window.dispatchEvent(event);
@@ -170,48 +159,43 @@
 
 	/* move loader */
 	Game.prototype.move = function(vector, x, y) {
-		var _ = this;
-
 		/* add loader from new point */
-		_.updateCell(x, y, LOADER);
+		this.updateCell(x, y, LOADER);
 
 		/* update loader coords */
-		_.active.x = x;
-		_.active.y = y;
+		this.active.x = x;
+		this.active.y = y;
 
 		/* delete loader from old point */
 		x = x - Number(vector[0]);
 		y = y - Number(vector[1]);
-		_.updateCell(x, y, -LOADER);
+		this.updateCell(x, y, -LOADER);
 
 		
-		_.updateView();
-		_.updateHistory();
+		this.updateView();
+		this.updateHistory();
 	};
 
 	/* move loader && push box */
 	Game.prototype.push = function(vector, x, y) {
-		var _ = this;
-
 		/* add box from new point */
-		_.updateCell(x, y, BOX);
+		this.updateCell(x, y, BOX);
 
 		/* delete box from new point */
 		x = x - vector[0];
 		y = y - vector[1];
-		_.updateCell(x, y, -BOX);
+		this.updateCell(x, y, -BOX);
 
 		/* move loader */
-		_.move(vector, x, y);
+		this.move(vector, x, y);
 
-		if (!_.point) {
-			_.over();
+		if (!this.point) {
+			this.over();
 		}
 	};
 
 	Game.prototype.getElementType = function(value, x, y) {
-		var elem_type,
-			_ = this;
+		var elem_type;
 
 		switch (value) {
 			case CASE:
@@ -219,8 +203,8 @@
 				break;
 			case LOADER:
 				elem_type = ['loader'];
-				_.active.x = x;
-				_.active.y = y;
+				this.active.x = x;
+				this.active.y = y;
 				break;
 			case BOX:
 				elem_type = ['box'];
@@ -233,8 +217,8 @@
 				break;
 			case CASE_LOADER:
 				elem_type = ['case', 'loader'];
-				_.active.x = x;
-				_.active.y = y;
+				this.active.x = x;
+				this.active.y = y;
 				break;
 			default:
 				elem_type = [];
@@ -244,41 +228,43 @@
 	};
 
 	Game.prototype.init = function (map_array) {
-		var i, j, k, max_i, max_j, max_k, elem, type, line, oline, cell, ocell, view, map,
-			html_map = document.querySelector('.' + CLASSPREFIX),
-			_ = this;
+		var i, j, k, maxI, max_j, maxK, elem, type, line, oLine, cell, oCell,
+			htmlMap = document.querySelector('.' + CLASSPREFIX),
+			self = this;
 
-		_.map = map_array;
-		oline = document.createElement('div');
-		oline.className = CLASSPREFIX +'__line';
-		ocell = document.createElement('div');
-		ocell.className = CLASSPREFIX +'__cell';
+		self.map = map_array;
+		oLine = document.createElement('div');
+		oLine.className = CLASSPREFIX +'__line';
+		oCell = document.createElement('div');
+		oCell.className = CLASSPREFIX +'__cell';
 
-		for (i = 0, max_i = _.map.length; i < max_i; i++) {
-			line = oline.cloneNode(false);
+		for (i = 0, maxI = self.map.length; i < maxI; i++) {
+			line = oLine.cloneNode(false);
 
-			for (j = 0, max_j = _.map[i].length; j < max_j; j++) {
-				elem = _.map[i][j];
-				type = _.getElementType(elem, j, i);
-				cell = ocell.cloneNode(false);
+			for (j = 0, max_j = self.map[i].length; j < max_j; j++) {
+				elem = self.map[i][j];
+				type = self.getElementType(elem, j, i);
+				cell = oCell.cloneNode(false);
 
 				if (elem === CASE || elem === CASE_LOADER) {
-					_.point++;
-					updateGame(_.point);
+					self.point++;
+					updateGame(self.point);
 				}
 
-				for (k = 0, max_k = type.length; k < max_k; k++) {
-					cell.appendChild(_.getElementView(type[k]));
+				for (k = 0, maxK = type.length; k < maxK; k++) {
+					cell.appendChild(self.getElementView(type[k]));
 				}
 
 				line.appendChild(cell);
 			}
 
-			html_map.appendChild(line);
+			htmlMap.appendChild(line);
 		}
 
 		window.addEventListener('keydown', function(e) {
-			if (!_.finish) {
+			var vector;
+
+			if (!self.finish) {
 				switch (e.keyCode) {
 					/* direction left */
 					case 37:
@@ -304,29 +290,29 @@
 						/* return back */
 						if (e.ctrlKey) {
 							vector = null;
-							var step = _.history.pop();
+							var step = self.history.pop();
 
 							if (step) {
-								_.viewChange = step;
-								_.updateMap();
-								_.updateView(true);
+								self.viewChange = step;
+								self.updateMap();
+								self.updateView(true);
 							}
-							break;
 						}
+						break;
 
 					default:
 						vector = null;
 				}
 
 				if (vector) {
-					_.change(vector);
+					self.change(vector);
 				}
 			}
 		});
 	};
 
 	function updateGame(point) {
-		event = new CustomEvent("gameUpdate", {
+		var event = new CustomEvent("gameUpdate", {
 			detail: {
 				point: point
 			}

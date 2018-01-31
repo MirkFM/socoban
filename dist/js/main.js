@@ -4,8 +4,8 @@
 		msg.style.opacity = 1;
 	}, false);
 
-	window.addEventListener("gameUpdate", function(e, point) {
-		var point = document.querySelector('#game_point');
+	window.addEventListener("gameUpdate", function(e) {
+		var point = document.querySelector('#game-point');
 		point.innerHTML = e.detail.point;
 	}, false);
 })();
